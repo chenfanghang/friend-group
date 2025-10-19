@@ -148,12 +148,46 @@ def add_person(name, age, job, relations=None):
     return new_id
 
 
+def get_max_age(group_list):
+    """Get the maximum age of people in the group"""
+    if not group_list:
+        return None
+    return max([person.get("age", 0) for person in group_list])
+
+
+def get_average_relations(group_list):
+    """Get the average (mean) number of relations among members of the group"""
+    if not group_list:
+        return 0
+    total_relations = sum([len(person.get("connections", [])) for person in group_list])
+    return total_relations / len(group_list)
+
+
+def get_max_age_with_relations(group_list):
+    """Get the maximum age of people in the group that have at least one relation"""
+    ages_with_relations = [person.get("age", 0) for person in group_list
+                           if len(person.get("connections", [])) > 0]
+    if not ages_with_relations:
+        return None
+    return max(ages_with_relations)
+
+
+def get_max_age_with_friends(group_list):
+    """[More advanced] Get the maximum age of people in the group that have at least one friend using comprehension"""
+    ages_with_friends = [person.get("age", 0) for person in group_list
+                         if any(conn.get("connection") == "friend"
+                                for conn in person.get("connections", []))]
+    if not ages_with_friends:
+        return None
+    return max(ages_with_friends)
+
+
 if __name__ == '__main__':
     avg = average_age()
     print(f"Average age of the group: {avg:.2f}")
 
-    print("Removing connection between Jill and Zalika...")
-    success = forget("Jill", "Zalika")
+    print("Removing connection between John and Nash...")
+    success = forget("John", "Nash")
     if success:
         print("Successfully removed connection")
         display_group(my_group)
@@ -163,3 +197,15 @@ if __name__ == '__main__':
     print("Adding a new person")
     new_id = add_person("chenfanghang", 25, "student", [{"id": 1, "connection": "classmate"}])
     display_group(my_group)
+
+    max_age = get_max_age(my_group)
+    print(f"The maximum age of people in the group: {max_age}")
+
+    avg_relations = get_average_relations(my_group)
+    print(f"The average (mean) number of relations among members of the group: {avg_relations:.2f}")
+
+    max_age_relations = get_max_age_with_relations(my_group)
+    print(f"The maximum age of people in the group that have at least one relation: {max_age_relations}")
+
+    max_age_friends = get_max_age_with_friends(my_group)
+    print(f"[More advanced] The maximum age of people in the group that have at least one friend: {max_age_friends}")
